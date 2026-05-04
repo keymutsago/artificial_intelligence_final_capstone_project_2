@@ -11,6 +11,13 @@ from matching import (
     build_project_roster,
     calculate_satisfaction,
 )
+from utils import (
+    create_page_header,
+    create_section_card,
+    create_info_panel,
+    format_list_items,
+    format_paragraph,
+)
 
 st.set_page_config(
     page_title="Capstone Project Matcher",
@@ -105,15 +112,10 @@ st.markdown(
 )
 
 st.markdown(
-    """
-    <div class='page-header'>
-        <h1>Capstone Project Matcher</h1>
-        <p style='font-size:1.1rem;line-height:1.8rem;margin-top:10px;'>
-            Upload student rankings and project capacity files, then generate optimized
-            assignments using a clean, modern matching workflow.
-        </p>
-    </div>
-    """,
+    create_page_header(
+        "Capstone Project Matcher",
+        "Upload student rankings and project capacity files, then generate optimized assignments using a clean, modern matching workflow."
+    ),
     unsafe_allow_html=True,
 )
 
@@ -121,12 +123,13 @@ with st.container():
     left, right = st.columns([2, 1])
 
     with left:
-        st.markdown("""
-            <div class='section-card'>
-                <h2>Upload Input Files</h2>
-                <p class='hint'>Start with the student ranking CSV and project capacity CSV. The app validates each file automatically.</p>
-            </div>
-        """, unsafe_allow_html=True)
+        st.markdown(
+            create_section_card(
+                "Upload Input Files",
+                hint="Start with the student ranking CSV and project capacity CSV. The app validates each file automatically."
+            ),
+            unsafe_allow_html=True,
+        )
 
         student_file = st.file_uploader("Upload student rankings CSV", type=["csv"])
         project_file = st.file_uploader("Upload project capacities CSV", type=["csv"])
@@ -156,12 +159,13 @@ with st.container():
             else:
                 st.error(project_message)
 
-        st.markdown("""
-            <div class='section-card'>
-                <h2>Run Optimization</h2>
-                <p class='hint'>Once both inputs are loaded and valid, generate the best possible assignments.</p>
-            </div>
-        """, unsafe_allow_html=True)
+        st.markdown(
+            create_section_card(
+                "Run Optimization",
+                hint="Once both inputs are loaded and valid, generate the best possible assignments."
+            ),
+            unsafe_allow_html=True,
+        )
 
         if st.button("Generate Optimized Assignments"):
             if student_df is None or project_df is None:
@@ -197,25 +201,22 @@ with st.container():
                                 student_df,
                             )
 
-                            st.markdown("""
-                                <div class='section-card'>
-                                    <h3>Student Assignments</h3>
-                                </div>
-                            """, unsafe_allow_html=True)
+                            st.markdown(
+                                create_section_card("Student Assignments"),
+                                unsafe_allow_html=True,
+                            )
                             st.dataframe(assignments_df)
 
-                            st.markdown("""
-                                <div class='section-card'>
-                                    <h3>Project Rosters</h3>
-                                </div>
-                            """, unsafe_allow_html=True)
+                            st.markdown(
+                                create_section_card("Project Rosters"),
+                                unsafe_allow_html=True,
+                            )
                             st.dataframe(roster_df)
 
-                            st.markdown("""
-                                <div class='section-card'>
-                                    <h3>Preference Satisfaction Summary</h3>
-                                </div>
-                            """, unsafe_allow_html=True)
+                            st.markdown(
+                                create_section_card("Preference Satisfaction Summary"),
+                                unsafe_allow_html=True,
+                            )
                             st.dataframe(satisfaction_df)
 
                             csv_output = assignments_df.to_csv(index=False).encode("utf-8")
@@ -227,20 +228,23 @@ with st.container():
                             )
 
     with right:
-        st.markdown("""
-            <div class='info-panel'>
-                <h3>How to use</h3>
-                <ul style='padding-left:18px;margin-top:10px;'>
-                    <li>Upload student ranking and project capacity CSVs.</li>
-                    <li>Confirm both files validate successfully.</li>
-                    <li>Click the button to generate assignments.</li>
-                    <li>Review summaries and download the results.</li>
-                </ul>
-                <p class='hint'>Use the CSV preview to verify your column names and ranking order.</p>
-            </div>
-            <div class='info-panel'>
-                <h3>Quick tips</h3>
-                <p><strong>student_id</strong>, <strong>student_name</strong>, and ranked choices are required.</p>
-                <p><strong>project_name</strong>, <strong>min_students</strong>, <strong>max_students</strong> are required.</p>
-            </div>
-        """, unsafe_allow_html=True)
+        how_to_content = (
+            "<ul style='padding-left:18px;margin-top:10px;'>" +
+            format_list_items([
+                "Upload student ranking and project capacity CSVs.",
+                "Confirm both files validate successfully.",
+                "Click the button to generate assignments.",
+                "Review summaries and download the results."
+            ]) +
+            "</ul>" +
+            format_paragraph("Use the CSV preview to verify your column names and ranking order.", "hint")
+        )
+        quick_tips_content = (
+            format_paragraph("<strong>student_id</strong>, <strong>student_name</strong>, and ranked choices are required.") +
+            format_paragraph("<strong>project_name</strong>, <strong>min_students</strong>, <strong>max_students</strong> are required.")
+        )
+        st.markdown(
+            create_info_panel("How to use", how_to_content) +
+            create_info_panel("Quick tips", quick_tips_content),
+            unsafe_allow_html=True,
+        )

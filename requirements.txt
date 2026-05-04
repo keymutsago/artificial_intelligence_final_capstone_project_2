@@ -54,4 +54,8 @@ Start the Streamlit application:
 powershell-
 streamlit run app/main.py
 
+or
+
+python -m streamlit run app/main.py
+
 The app will open in your browser at `http://localhost:8501`. for now
